@@ -151,10 +151,11 @@ sanity-check that the code behaves; real TSM numbers will differ.
 
 - What time is the class? From about 21:30 Taipei time (22:30 in the northern winter) New York is
   trading: the notebook then uses the previous close, which is correct but worth knowing.
-- How long should the robot keep running ("for a while")? When should it be switched off?
 
 Answered 2026-10-05: first class Wednesday 2026-10-07; repo `tdgurupro/tsm-trend`; students
-only watch td's demo; English only for all class materials.
+only watch td's demo; English only for all class materials; the robot keeps running with no
+planned end date (td chose not to set one; to stop it: Actions → Daily TSM prediction → ⋯ →
+Disable workflow).
 
 ## Ideas raised but not agreed (do not build without asking)
 
