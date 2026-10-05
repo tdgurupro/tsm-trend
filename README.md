@@ -30,7 +30,7 @@ Built for a 75-minute MIS class demo, with a robot that makes a real call every 
 ## Running the class
 
 - **Before class:** *Runtime → Run all* (about a minute). If Yahoo Finance fails, set `DATA_SOURCE = "snapshot"` in Part 2 and run again.
-- **Weekly update:** open `scorecard.md` on GitHub, or rerun Part 8 of the notebook.
+- **Weekly update:** open `scorecard.md` on GitHub (nothing to run), or *Run all* in the notebook and scroll to Part 8.
 
 ## Good to know
 

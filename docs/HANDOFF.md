@@ -145,7 +145,7 @@ sanity-check that the code behaves; real TSM numbers will differ.
    yet, so Part 8 prints "No predictions have matured yet". That is expected; it is the moment to
    explain why a call needs 5 trading days. The 10-02 call is first scored by the Fri 10-09 run
    (Sat 06:30 Taipei).
-5. Every week before class: open `scorecard.md` or rerun Part 8.
+5. Every week before class: open `scorecard.md` (nothing to run), or Run all in Colab and scroll to Part 8 (Part 8 alone fails in a fresh session: it needs the cells above it).
 
 ## Open questions for td
 
