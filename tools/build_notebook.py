@@ -25,7 +25,7 @@ DEFAULT_OUT = ROOT / "tsm_trend_demo.ipynb"
 EXPECTED_SECTIONS = ["settings", "data", "features", "target", "models",
                      "walkforward", "evaluation", "plotting", "live"]
 
-text = SRC.read_text()
+text = SRC.read_text(encoding="utf-8")
 parts = re.split(r"^# ==== SECTION: (\w+) ====\n", text, flags=re.M)
 sections = {parts[i]: parts[i + 1].strip() for i in range(1, len(parts), 2)}
 if list(sections) != EXPECTED_SECTIONS:
@@ -119,7 +119,7 @@ A model cannot look at a chart. It reads a **table**: one row per trading day, o
 """)
 
 code(sections["features"])
-code('pd.DataFrame(FEATURE_INFO, index=["Family", "Meaning"]).T')
+code("feature_table()")
 
 md("""
 ### The answer key
@@ -134,7 +134,11 @@ data = make_dataset(panel)
 print(f"{len(data):,} rows x {len(FEATURES)} features. The last {HORIZON} rows have no answer yet: that is the future.")
 data[["ret_5d", "rsi_14", "adr_premium", "future_return", "target"]].tail(8)""")
 
-md("One of the more interesting signals: how much extra US investors pay for TSMC in New York compared with Taipei.")
+md("""
+One of the more interesting signals: how much extra US investors pay for TSMC in New York compared with Taipei.
+
+**Free data has errors.** Yahoo's exchange-rate feed contains a few impossible days, with the US dollar suddenly worth a small fraction of its usual amount in Taiwan dollars. Left in, each one would draw a fake crash in this chart and quietly distort three of the model's signals. The engine room ignores any USD/TWD rate more than 20% away from the previous days' rates and carries the last good rate forward. When the prices come live from Yahoo, the message under Part 2 lists the days it ignored.
+""")
 code("plot_adr_premium(data)")
 
 md("""
@@ -246,6 +250,10 @@ show_prediction_card(as_of, panel.loc[as_of, "TSM_RawClose"], today)
 """)
 
 md("""
+**Why the robot's call can differ from this one.** The robot logs its own call for each close (Part 8). When a model sits close to 50%, tiny differences can flip it between UP and DOWN: prices downloaded a few minutes apart, or a newer version of the software. A 51% "UP" is barely better than a coin flip. The official call is the one in the public log, recorded before anyone knew the outcome.
+""")
+
+md("""
 ## Part 8. The live scorecard (weekly update)
 
 Every trading day a small robot (GitHub Actions) repeats Part 7 and writes the call into a public log **before** the outcome is known. Five trading days later it marks the call right or wrong. Backtests can be fooled; a timestamped live record cannot.
@@ -313,12 +321,12 @@ def main():
     args = parser.parse_args()
     content = build()
     if args.check:
-        current = DEFAULT_OUT.read_text() if DEFAULT_OUT.exists() else ""
+        current = DEFAULT_OUT.read_text(encoding="utf-8") if DEFAULT_OUT.exists() else ""
         if current != content:
             sys.exit("tsm_trend_demo.ipynb is out of date: run  python tools/build_notebook.py")
         print("Notebook is up to date.")
         return
-    args.out.write_text(content)
+    args.out.write_text(content, encoding="utf-8", newline="\n")   # same bytes on Windows as on Linux
     print(f"Wrote {args.out} ({len(cells)} cells)")
 
 

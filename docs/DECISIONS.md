@@ -137,3 +137,28 @@ the build.
 version range.**
 - Why: fast installs in Colab and Actions; code verified on pandas 2.2/scikit-learn 1.6 (Colab) and
   pandas 3/scikit-learn 1.9.
+
+## After the first real run (2026-10-05)
+
+**D-27. Ignore impossible USD/TWD rates** (td approved fixing it).
+The first real download showed two impossible Yahoo rates (2011-10-25 at 1.80, 2014-12-31 at 3.67;
+the true rate was about 30). `drop_impossible_fx` drops a rate more than 20% away from the median
+of the previous 5 rates; the forward fill carries the last good one.
+- Why: a provable data error, not a modelling choice. It drew fake -90% spikes in the ADR premium and
+  distorted three features, including near -94% and +1,500% values in `twd_chg_20d`. The rule was
+  set from the data error alone, before looking at any accuracy, and is not tuned (D-03, D-11).
+- Only past rates judge each day, so no look-ahead. FX only: equities and VIX can genuinely jump 20%.
+- Rejected: leaving the errors in as a teaching example (it quietly damages the live model; the
+  notebook explains the rule instead); hand-editing the two dates (Yahoo's history may change, and
+  a rule also catches future glitches).
+- Consequence: model v1.1. Calls from the close of 2026-10-05 on use it; the 2026-10-02 call was v1.
+
+**D-28. Explain, do not hide, that the notebook's call can differ from the robot's.**
+On 2026-10-05 the robot logged gradient boosting at 49.6% (DOWN) for the 2026-10-02 close, while
+Colab gave 50.7% (UP) for the same close: prices downloaded minutes apart and scikit-learn 1.6
+(Colab) versus a newer version (Actions).
+- Why: a call that flips on such tiny differences is barely better than a coin flip, which is a
+  useful lesson about reproducibility. The public log is the official record.
+- Rejected: pinning Actions to Colab's library versions (Colab upgrades without notice, and the
+  download-time differences would remain); showing only the logged call in Part 7 (the class should
+  see the model being trained and called live).

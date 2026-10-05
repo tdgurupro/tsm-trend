@@ -57,6 +57,20 @@ def _download_one(ticker, start=START, end=None, retries=3):
     raise RuntimeError(f"Could not download {ticker} from Yahoo Finance ({last_error or 'no data returned'})")
 
 
+def drop_impossible_fx(rate, max_move=0.20):
+    """Free data has errors: Yahoo's USD/TWD feed contains a few impossible days
+    (about 1.8 or 3.7 instead of about 30). A rate more than 20% away from the
+    median of the PREVIOUS 5 days is treated as missing, so the last good rate is
+    carried forward. Only past values are used to judge each day."""
+    rate = rate.astype(float).dropna()
+    reference = rate.rolling(5, min_periods=1).median().shift(1)
+    bad = (rate / reference - 1).abs() > max_move
+    if bad.any():
+        print(f"Ignoring {bad.sum()} impossible USD/TWD rate(s) from Yahoo on: "
+              + ", ".join(f"{d:%Y-%m-%d}" for d in rate.index[bad]))
+    return rate[~bad]
+
+
 def assemble_panel(raw):
     """Line every market up on TSM's New York trading calendar."""
     def adjusted(df):    # dividends added back: the right price for measuring returns
@@ -74,7 +88,7 @@ def assemble_panel(raw):
     others = {
         "TW2330_Close": adjusted(raw["TW2330"]), "TW2330_RawClose": raw["TW2330"]["Close"],
         "SOXX_Close": adjusted(raw["SOXX"]), "QQQ_Close": adjusted(raw["QQQ"]),
-        "VIX_Close": raw["VIX"]["Close"], "USDTWD_Close": raw["USDTWD"]["Close"],
+        "VIX_Close": raw["VIX"]["Close"], "USDTWD_Close": drop_impossible_fx(raw["USDTWD"]["Close"]),
     }
     for col, s in others.items():
         s = s.astype(float).dropna()
@@ -458,11 +472,19 @@ def _subtitle(ax, text):
     ax.text(0, 1.02, text, transform=ax.transAxes, color=INK_2, fontsize=10, va="bottom")
 
 
+def feature_table():
+    """Every signal with its family and meaning, in full (plain pandas cuts long text short)."""
+    table = pd.DataFrame(FEATURE_INFO, index=["Family", "Meaning"]).T
+    return table.style.set_properties(**{"text-align": "left"})
+
+
 def plot_price(panel):
     fig, ax = plt.subplots()
     ax.plot(panel.index, panel["TSM_Close"], color=COLORS["TSM"])
     ax.set_yscale("log")
+    ax.yaxis.set_major_locator(mticker.LogLocator(base=10, subs=(1, 2, 5)))   # $5, $10, $20, $50, ...
     ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda v, _: f"${v:,.0f}"))
+    ax.yaxis.set_minor_formatter(mticker.NullFormatter())
     ax.set_title("TSM ADR price (dividend-adjusted, log scale)", pad=22)
     _subtitle(ax, "On a log scale, equal vertical distances mean equal % moves")
     plt.show()
@@ -534,8 +556,9 @@ def plot_walk_forward_scheme(n_folds=5):
 
 
 def _hbar_axes(ax, y, labels, values):
-    for yi, v in zip(y, values):
-        ax.text(v + 0.004, yi, f"{v:.1%}", va="center", color=INK, fontweight="bold")
+    for yi, v in zip(y, values):   # the background keeps a label readable where it crosses the 50% line
+        ax.text(v + 0.004, yi, f"{v:.1%}", va="center", color=INK, fontweight="bold",
+                bbox=dict(facecolor=SURFACE, edgecolor="none", pad=1))
     ax.axvline(0.5, color=INK, linewidth=1, linestyle=(0, (4, 3)))
     ax.set_ylim(min(y) - 0.95, max(y) + 0.5)
     ax.text(0.5, min(y) - 0.75, " coin flip (50%)", color=INK_2, va="center")
@@ -552,7 +575,9 @@ def plot_accuracy_bars(acc, title="How often each strategy called the week right
     y = np.arange(len(names))[::-1]
     ax.barh(y, values, color=[COLORS[n] for n in names], height=0.6)
     _hbar_axes(ax, y, names, values)
-    ax.set_title(title, pad=10)
+    ax.set_title(title, pad=22)
+    _subtitle(ax, "Every call was made on days the model had not seen. The bar to beat is grey "
+                  "(always say UP), not the 50% line.")
     plt.show()
 
 

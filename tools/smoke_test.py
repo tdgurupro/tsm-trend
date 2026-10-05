@@ -87,6 +87,18 @@ def features_and_target_use_only_the_past(tmp):
 
 
 @check
+def impossible_fx_rates_are_judged_only_on_the_past(tmp):
+    idx = pd.bdate_range("2024-01-01", periods=40)
+    rate = pd.Series(30 + np.random.default_rng(3).normal(0, 0.1, 40), index=idx)
+    rate.iloc[20] = 1.8                            # the kind of glitch Yahoo really has
+    clean = tp.drop_impossible_fx(rate)
+    assert idx[20] not in clean.index and len(clean) == 39, "the impossible rate was kept"
+    later = rate.copy()
+    later.iloc[25:] *= 0.5                         # whatever happens later must not change earlier days
+    pd.testing.assert_series_equal(clean.loc[:idx[24]], tp.drop_impossible_fx(later).loc[:idx[24]])
+
+
+@check
 def walk_forward_uses_only_the_past(tmp):
     panel = tp.make_synthetic_panel(end="2016-12-31")
     data = tp.make_dataset(panel)
@@ -173,6 +185,8 @@ def yahoo_shaped_data_is_aligned_correctly(tmp):
             s.index = s.index.tz_localize("Asia/Taipei")
         if ticker == "TSM":       # a New York holiday
             s = s.drop(pd.to_datetime(["2026-07-03"]))
+        if ticker == "TWD=X":     # an impossible rate, like Yahoo's 1.80 on 2011-10-25
+            s.loc["2026-03-11"] /= 16
         df = pd.DataFrame({"Adj Close": s * 0.97, "Close": s, "High": s * 1.01,
                            "Low": s * 0.99, "Open": s, "Volume": 1e7})
         df.columns = pd.MultiIndex.from_product([df.columns, [ticker]], names=["Price", "Ticker"])
@@ -192,6 +206,8 @@ def yahoo_shaped_data_is_aligned_correctly(tmp):
     assert pd.Timestamp("2026-07-03") not in panel.index, "rows must follow TSM's New York calendar"
     assert (panel.loc["2026-02-18", "TW2330_RawClose"] == panel.loc["2026-02-13", "TW2330_RawClose"]), \
         "a Taiwan holiday must carry the last known price forward"
+    assert (panel.loc["2026-03-11", "USDTWD_Close"] == panel.loc["2026-03-10", "USDTWD_Close"]), \
+        "an impossible FX rate must be replaced by the last good one"
     assert np.allclose(panel["TSM_Close"] / panel["TSM_RawClose"], 0.97), "adjusted vs raw columns mixed up"
     assert np.isfinite(tp.build_features(panel).dropna().to_numpy()).all()
 
@@ -230,7 +246,7 @@ def execute_notebook(tmp):
                            .replace("%pip install -q --upgrade yfinance", "pass")
                            .replace('DATA_SOURCE = "yahoo"', 'DATA_SOURCE = "synthetic"')
                            .replace("https://raw.githubusercontent.com/tdgurupro/tsm-trend/main",
-                                    str(folder)))
+                                    folder.as_posix()))   # forward slashes: a Windows path would break the string
     test_copy = folder / "test.ipynb"
     nbf.write(nb, test_copy)
     result = subprocess.run(["jupyter", "nbconvert", "--to", "notebook", "--execute", str(test_copy),

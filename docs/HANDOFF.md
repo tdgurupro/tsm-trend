@@ -57,13 +57,31 @@ td received the repo as `tsm-trend.zip`, plus the notebook on its own.
    so the two early commits carry the author `tdgurupro` instead of `tdgurupro-lgtm`. This
    changed the hash of the robot's first commit ("Daily TSM call 2026-10-05"), not its content.
    **Never rewrite history again**: the commits are the live record's audit trail (D-17, D-19).
+7. **Same session: first notebook run on real data**, in Colab through td's Chrome (Colab had
+   scikit-learn 1.6.1, pandas 2.2.3, numpy 2.1.3). It ran without errors. Findings and fixes:
+   impossible Yahoo FX rates (D-27, which makes the model v1.1); the Part 7 card disagreeing with the
+   robot's logged boosting call for the same close (D-28, explained in the notebook); and cosmetics
+   (the price chart labelled only $10 and $100, the feature table cutting text short, the accuracy
+   bars without a subtitle and with a label crossing the 50% line). td then approved a project-only
+   `.venv` (gitignored) so the smoke test can run locally. `pip` stalled for 30+ minutes: td's ISP
+   (HiNet) routes PyPI's CDN (Fastly) via NTT to an overseas server (about 85 ms, 65–450 KB/s,
+   IPv6 not working), while conda-forge is served by Cloudflare in Taipei (7 ms, about 6.5 MB/s).
+   So `.venv` is a conda environment built with
+   `C:\Users\David\miniforge3\Scripts\mamba.exe create -p ./.venv -c conda-forge python=3.12 ...`
+   (the packages in `requirements.txt` plus nbformat, nbconvert, ipykernel); run
+   `.venv/python.exe` (with the PATH line from `CLAUDE.md`). Running on Windows for the first time
+   also exposed two Windows-only bugs, both fixed: the notebook builder wrote the notebook in the
+   locale encoding (cp950 on td's machine) instead of UTF-8, which Colab cannot read; and the
+   smoke test pasted a backslash Windows path into a Python string. td re-logged in to `gh` as `tdgurupro`
+   and plans to make `davidkuo0720` the machine's default again, so other projects are unaffected;
+   from then on push from this folder with `GH_TOKEN=$(gh auth token --user tdgurupro) git push`.
 
 ## Current state
 
 ### Built
 - `tsm_pipeline.py`: data, 18 features, target, two models, walk-forward, shuffled-split demo,
   backtest, 11 charts plus an HTML prediction card, live log and scorecard.
-- `tsm_trend_demo.ipynb`: 39 cells, nine parts, 75-minute run-of-show at the top.
+- `tsm_trend_demo.ipynb`: 40 cells, nine parts, 75-minute run-of-show at the top.
 - `daily_predict.py` + `.github/workflows/daily.yml`: the robot (22:30 UTC Mon–Fri).
 - `tools/build_notebook.py`, `tools/smoke_test.py`.
 
@@ -84,16 +102,23 @@ td received the repo as `tsm-trend.zip`, plus the notebook on its own.
   logistic UP (0.547), boosting DOWN (0.4961). The bot committed all four outputs.
 - Watch: GitHub warned that `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19. Check the first
   run after that date.
+- **Whole notebook in Colab on real data (model v1, before the FX fix):** about 1.5 minutes, no
+  errors; collapsed form cells and the HTML prediction card render. Real numbers, data through
+  2026-10-02: base rate 55.6% UP weeks. Walk-forward over 3,398 calls: always up 56.0%, logistic
+  52.7%, boosting 50.5%, momentum 49.2%. Leakage demo: real TSM 64.3% shuffled vs 50.6% time order;
+  fake stock 61.6% vs 44.8%. $10,000 from 2013: buy and hold $387,340, logistic $116,820, boosting
+  $44,093. The honest "models do not beat always up" result the class is built around.
+
+- **Model v1.1 verified locally on 2026-10-05** (conda `.venv`: pandas 2.3.2, scikit-learn 1.9.1,
+  numpy 2.2.6, matplotlib 3.11.2, yfinance 1.7.0): `smoke_test.py --notebook` 11/11 passed;
+  `drop_impossible_fx` on the real history drops exactly 2011-10-25 and 2014-12-31 and keeps the
+  other 4,211 rates (27.4 to 33.7); a real-data robot dry run into a scratch folder succeeded.
 
 ### NOT yet verified
-- **The notebook on real data.** Real chart shapes and the leakage demo on real TSM are unseen.
-  Some chart axis ranges (for example the accuracy bars starting at 35%) may need adjusting.
+- **The notebook in Colab with model v1.1** (after the FX fix and chart changes). Rerun it there
+  before class.
 - **Scheduled runs** (the 22:30 UTC cron) and scoring of a matured call (first one: the 10-09 run).
-- **Colab rendering:** collapsed `# @title` form cells, the HTML prediction card, and runtime on
-  Colab's CPUs (expected about a minute).
 - The partial-bar guard (needs a run during New York trading hours).
-- `python tools/smoke_test.py --notebook` and `build_notebook.py --check` after the 2026-10-05
-  repo-URL change (no local Python environment on td's machine). Run them when one exists.
 
 ### Reference numbers from the synthetic stock (NOT real results)
 With `make_synthetic_panel()` ending 2026-10-05: walk-forward accuracy always up 54.3%, momentum 53.0%,
@@ -104,10 +129,12 @@ sanity-check that the code behaves; real TSM numbers will differ.
 ## Next steps (in order; first class is Wednesday 2026-10-07)
 
 1. ~~td: create the repo and push, start the robot once~~ Done 2026-10-05 (see "Verified live").
-2. **First notebook run in Colab** on real data:
+2. ~~First notebook run in Colab~~ Done 2026-10-05 (session item 7). **Rerun it after the v1.1
+   push** and check the FX message under Part 2, the ADR premium chart (no -90% spikes), the price
+   chart's axis, the feature table and the accuracy bars:
    `https://colab.research.google.com/github/tdgurupro/tsm-trend/blob/main/tsm_trend_demo.ipynb`.
-   Review every chart and sentence against the real output; fix wording or axis ranges in the
-   builder or `tsm_pipeline.py`, never in Colab. Do not tune the model to the results (D-03, D-11).
+   Fix wording or axis ranges in the builder or `tsm_pipeline.py`, never in Colab. Do not tune the
+   model to the results (D-03, D-11).
 3. **Time a rehearsal** against the 75-minute run-of-show; trim if over.
 4. **What the live log will hold on Wednesday:** calls for the closes of Fri 2026-10-02 (the manual
    first run, logged on Mon 10-05 before New York opened), Mon 10-05 and Tue 10-06. None scored
@@ -138,4 +165,5 @@ The live record is only meaningful for a fixed model. Record any change here wit
 
 | Date | Change | Calls affected |
 |---|---|---|
-| (none yet) | Model v1: 18 features, logistic regression C=0.1, gradient boosting depth 3 | All calls so far |
+| 2026-10-04 | Model v1: 18 features, logistic regression C=0.1, gradient boosting depth 3 | The call for the close of 2026-10-02 |
+| 2026-10-05 | Model v1.1: impossible USD/TWD rates ignored (D-27); features, models and settings unchanged | Calls from the close of 2026-10-05 on (first robot run after the push) |

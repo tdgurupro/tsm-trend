@@ -73,6 +73,17 @@ dividend-adjusted `Adj Close`.
   the date, which would distort a ratio between two differently adjusted series and smuggle in
   a little future information.
 
+### Impossible exchange rates
+
+Yahoo's `TWD=X` history contains impossible days. The first real download (2026-10-05) found
+2011-10-25 at 1.80 and 2014-12-31 at 3.67, where the true rate was about 30. Each one drew a
+-90% spike in the ADR premium and distorted three features (`adr_premium`, `adr_premium_vs_60d`
+for 60 days, `twd_chg_20d` with values near -94% and +1,500%, which also inflates the logistic
+model's scaling of that feature). `drop_impossible_fx` treats a rate more than 20% away from the
+median of the previous 5 rates as missing; the forward fill then carries the last good rate. The
+judgement uses only past values, so it adds no look-ahead. USD/TWD has never moved 20% in a day;
+equity series and VIX can, so the rule applies to the FX rate only (D-27).
+
 ### Unfinished bars
 
 During New York trading hours Yahoo includes today's incomplete bar. `download_prices` drops it
@@ -302,12 +313,13 @@ shows. Charts compute their own numbers.
 | Check | Guards against |
 |---|---|
 | `features_and_target_use_only_the_past` | Scrambles every price after a date (and the FX rate *on* that date); features and targets up to that date must not change. |
+| `impossible_fx_rates_are_judged_only_on_the_past` | A planted 1.80 rate is dropped; halving every later rate must not change which earlier rates are kept. |
 | `walk_forward_uses_only_the_past` | Same perturbation, cut 2 days into a test block; walk-forward probabilities up to the cut must not change (catches a missing purge gap). |
 | `backtest_trades_at_the_next_close` | The return credited to day *t* must be day *t+2*'s. |
 | `shuffled_test_is_fooled_by_a_random_walk` | Keeps the leakage demo dramatic (shuffled > 56% and at least 5 points above time order). |
 | `live_log_scores_the_right_day_and_never_duplicates` | 27 simulated robot runs including a re-run; every score checked independently. |
 | `damaged_log_fails_loudly` | Merge-conflict, empty and wrongly headed logs must raise; a missing one must start fresh. |
-| `yahoo_shaped_data_is_aligned_correctly` | Mocked Yahoo data with MultiIndex columns, Taipei time zone and holidays on both sides. |
+| `yahoo_shaped_data_is_aligned_correctly` | Mocked Yahoo data with MultiIndex columns, Taipei time zone, holidays on both sides and one impossible FX rate (replaced by the last good one). |
 | `daily_script_runs_twice_without_duplicating` | The CLI end to end, twice. |
 | `notebook_is_in_sync_with_the_code` | The committed notebook equals a fresh build (SKIP if nbformat is missing). |
 
@@ -317,8 +329,12 @@ centred moving average) were each caught.
 
 ## 14. Known limitations
 
-- Never run on real Yahoo data or real GitHub Actions yet (see `docs/HANDOFF.md`).
-- yfinance is unofficial; Yahoo can change formats or block cloud IPs without notice.
+- yfinance is unofficial; Yahoo can change formats or block cloud IPs without notice, and its
+  history contains errors (see "Impossible exchange rates"). Only the FX rate is checked.
+- Gradient boosting's probability can move by a point or two between Colab and the robot (prices
+  downloaded minutes apart, different scikit-learn versions). Near 50% that flips the call, so the
+  notebook's Part 7 card can disagree with the robot's logged call for the same close. The notebook
+  says so; the logged call is the official one (D-28).
 - The backtest ignores taxes, cash interest and ADR fees.
 - `check_on_approx` ignores holidays (display only; scoring uses the real calendar).
 - The leakage demo's exact percentages depend on the data; the smoke test only guarantees the gap

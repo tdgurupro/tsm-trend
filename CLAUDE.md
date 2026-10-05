@@ -14,14 +14,19 @@ features or parameters to make the backtest look better.
 
 ## Status (last updated 2026-10-05)
 
-- Built and tested **offline only**. The first build session had no network access to Yahoo
-  Finance, so nothing has run on real TSM prices yet. The first real run happens in Colab or
-  GitHub Actions on td's side; check its output before trusting any chart text about results.
+- **Live since 2026-10-05.** The robot's first run on GitHub Actions and the notebook's first run in
+  Colab both used real Yahoo data; results and the fixes they led to are in `docs/HANDOFF.md`.
+  The model is v1.1 (D-27); see the model change log there.
 - Repo: `https://github.com/tdgurupro/tsm-trend` (public). `GITHUB_RAW` in the notebook points
-  at it (set in `tools/build_notebook.py`). td creates the repo and starts the robot on
-  2026-10-05; check `git log` for "Daily TSM call" commits before assuming it is live.
-- Work in a `git clone` of that repo (`C:\Users\David\Workspace\tsm-trend` is one once pushed):
-  the robot commits the live log there daily, so `git pull` before changing anything.
+  at it (set in `tools/build_notebook.py`). Check `git log` for daily "Daily TSM call" commits.
+- Work in a `git clone` of that repo (`C:\Users\David\Workspace\tsm-trend` is one): the robot
+  commits the live log there daily, so `git pull` before changing anything. On td's Windows
+  machine run Python as `.venv/python.exe` (a project-only conda environment, gitignored; built
+  from conda-forge because PyPI downloads crawl on td's ISP route, see `docs/HANDOFF.md`). In bash,
+  first `export PATH="$PWD/.venv:$PWD/.venv/Scripts:$PWD/.venv/Library/bin:$PATH"`: without the
+  conda DLL folder the robot dies silently mid-run (exit 127), and `jupyter` is not found. The
+  machine's default `gh` account may be td's other account (`davidkuo0720`), so push with
+  `GH_TOKEN=$(gh auth token --user tdgurupro) git push`.
 - **First class demo: Wednesday 2026-10-07.** td runs the notebook in Colab; students only watch.
   All class materials in English. Open items and history: `docs/HANDOFF.md`.
 
