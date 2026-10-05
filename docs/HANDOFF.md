@@ -70,11 +70,19 @@ td received the repo as `tsm-trend.zip`, plus the notebook on its own.
 - The smoke test catches seven deliberately planted bugs (see `docs/DESIGN.md` §13).
 - All charts were rendered and visually checked for overlaps and legibility.
 
+### Verified live (2026-10-05)
+- **First robot run on GitHub Actions on real Yahoo data**, started by hand (run 37265051979, 44 s,
+  Python 3.12.14). The download worked from Actions; `data/prices.csv` has 4,213 trading days from
+  2010-01-04 to 2026-10-02 with no empty cells in recent rows. First live call, for the close of
+  Fri 2026-10-02 (TSM $472.78), logged Mon 2026-10-05 04:48 UTC before New York opened:
+  logistic UP (0.547), boosting DOWN (0.4961). The bot committed all four outputs.
+- Watch: GitHub warned that `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19. Check the first
+  run after that date.
+
 ### NOT yet verified
-- **Any run on real Yahoo data.** Real numbers, real chart shapes and the leakage demo on real TSM are
-  unseen. Some chart axis ranges (for example the accuracy bars starting at 35%) may need adjusting.
-- **GitHub Actions** has never run the workflow (action versions `checkout@v6` / `setup-python@v6`
-  exist as tags but are untested here; Yahoo may rate-limit Actions IPs).
+- **The notebook on real data.** Real chart shapes and the leakage demo on real TSM are unseen.
+  Some chart axis ranges (for example the accuracy bars starting at 35%) may need adjusting.
+- **Scheduled runs** (the 22:30 UTC cron) and scoring of a matured call (first one: the 10-09 run).
 - **Colab rendering:** collapsed `# @title` form cells, the HTML prediction card, and runtime on
   Colab's CPUs (expected about a minute).
 - The partial-bar guard (needs a run during New York trading hours).
@@ -89,11 +97,7 @@ sanity-check that the code behaves; real TSM numbers will differ.
 
 ## Next steps (in order; first class is Wednesday 2026-10-07)
 
-1. **td: create the repo and push** from this folder:
-   `gh repo create tdgurupro-lgtm/tsm-trend --public --source . --remote origin --push`,
-   then start the robot once: `gh workflow run daily.yml`. Check that `predictions_log.csv`,
-   `scorecard.md`, `scorecard.png` and `data/prices.csv` appear. This is the **first run on real
-   Yahoo data**: check the last date in `data/prices.csv` and the logged call.
+1. ~~td: create the repo and push, start the robot once~~ Done 2026-10-05 (see "Verified live").
 2. **First notebook run in Colab** on real data:
    `https://colab.research.google.com/github/tdgurupro-lgtm/tsm-trend/blob/main/tsm_trend_demo.ipynb`.
    Review every chart and sentence against the real output; fix wording or axis ranges in the
