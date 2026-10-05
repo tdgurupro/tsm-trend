@@ -1,0 +1,41 @@
+name: Daily TSM prediction
+
+on:
+  schedule:
+    # 22:30 UTC Monday-Friday = 06:30 Taipei the next morning,
+    # safely after the New York close in both summer and winter time.
+    - cron: "30 22 * * 1-5"
+  workflow_dispatch:        # adds a "Run workflow" button for manual runs
+
+permissions:
+  contents: write           # lets the robot commit the log back to the repo
+
+concurrency:
+  group: daily-prediction
+  cancel-in-progress: false
+
+jobs:
+  predict:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install libraries
+        run: pip install -r requirements.txt
+
+      - name: Make today's call and score old ones
+        run: python daily_predict.py
+
+      - name: Save results to the repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add predictions_log.csv scorecard.md scorecard.png data/prices.csv
+          git diff --staged --quiet || git commit -m "Daily TSM call $(date -u +%Y-%m-%d)"
+          git push
