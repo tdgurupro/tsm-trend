@@ -17,7 +17,7 @@ paths:
   sentence before each chart telling students what to look for. Name the business take-away.
 - Keep these strings exact, because `tools/smoke_test.py` swaps them to run the notebook offline:
   `%pip install -q --upgrade yfinance`, `DATA_SOURCE = "yahoo"` and
-  `https://raw.githubusercontent.com/tdgurupro-lgtm/tsm-trend/main`. If you change one, update
+  `https://raw.githubusercontent.com/tdgurupro/tsm-trend/main`. If you change one, update
   `execute_notebook` in the smoke test too. (If the repo ever moves, change the URL in the
   builder and in the smoke test together. Keep the `YOUR-GITHUB-NAME` check in `load_panel`:
   it protects copies of the notebook that still carry the old placeholder.)

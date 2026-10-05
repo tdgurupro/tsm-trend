@@ -229,7 +229,7 @@ def execute_notebook(tmp):
             cell.source = (cell.source
                            .replace("%pip install -q --upgrade yfinance", "pass")
                            .replace('DATA_SOURCE = "yahoo"', 'DATA_SOURCE = "synthetic"')
-                           .replace("https://raw.githubusercontent.com/tdgurupro-lgtm/tsm-trend/main",
+                           .replace("https://raw.githubusercontent.com/tdgurupro/tsm-trend/main",
                                     str(folder)))
     test_copy = folder / "test.ipynb"
     nbf.write(nb, test_copy)

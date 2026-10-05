@@ -17,7 +17,7 @@ features or parameters to make the backtest look better.
 - Built and tested **offline only**. The first build session had no network access to Yahoo
   Finance, so nothing has run on real TSM prices yet. The first real run happens in Colab or
   GitHub Actions on td's side; check its output before trusting any chart text about results.
-- Repo: `https://github.com/tdgurupro-lgtm/tsm-trend` (public). `GITHUB_RAW` in the notebook points
+- Repo: `https://github.com/tdgurupro/tsm-trend` (public). `GITHUB_RAW` in the notebook points
   at it (set in `tools/build_notebook.py`). td creates the repo and starts the robot on
   2026-10-05; check `git log` for "Daily TSM call" commits before assuming it is live.
 - Work in a `git clone` of that repo (`C:\Users\David\Workspace\tsm-trend` is one once pushed):

@@ -97,7 +97,7 @@ code("""
 #   "snapshot"   backup copy saved every morning by the GitHub robot (use if Yahoo fails in class)
 #   "synthetic"  a FAKE random-walk stock that works offline (testing only)
 DATA_SOURCE = "yahoo"
-GITHUB_RAW = "https://raw.githubusercontent.com/tdgurupro-lgtm/tsm-trend/main"
+GITHUB_RAW = "https://raw.githubusercontent.com/tdgurupro/tsm-trend/main"
 
 panel = load_panel(DATA_SOURCE, GITHUB_RAW)
 print(f"{len(panel):,} trading days, {panel.index[0]:%Y-%m-%d} to {panel.index[-1]:%Y-%m-%d}")

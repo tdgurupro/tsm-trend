@@ -43,14 +43,17 @@ td received the repo as `tsm-trend.zip`, plus the notebook on its own.
    decided: start the robot now, td demos and students only watch, English only, first class
    **Wednesday 2026-10-07**. td asked not to set up a local Python environment (demo goes straight
    to Colab), so the smoke test was not run. The placeholder repo URL was replaced with
-   `tdgurupro-lgtm` in `tools/build_notebook.py`, `tools/smoke_test.py` and the notebook's
+   `tdgurupro` in `tools/build_notebook.py`, `tools/smoke_test.py` and the notebook's
    `GITHUB_RAW` line (the same one-line substitution in builder and notebook; cell ids are
    positional, so this equals a rebuild, but `--check` has not been run). The folder became a git
    repo on branch `main`; creating the public GitHub repo and pushing is left to td, because
-   publishing needs td's own approval. The repo lives on td's GitHub account `tdgurupro-lgtm`
+   publishing needs td's own approval. The repo lives on td's GitHub account `tdgurupro`
    (logged in with `gh`, now the machine's active account; the older `davidkuo0720` login is kept
-   but inactive). Commits in this folder are authored as `tdgurupro-lgtm <tdgurupro@gmail.com>`
-   (repo-local git config; the machine-wide identity is unchanged).
+   but inactive). Commits in this folder are authored as `tdgurupro <tdgurupro@gmail.com>`
+   (repo-local git config; the machine-wide identity is unchanged). td created the repo and
+   started the first robot run as `tdgurupro-lgtm`, then renamed that account to `tdgurupro` the
+   same day (account id 324321998), and every URL was updated. The first two commits still show
+   the old author name. Local `gh` may still list the account as `tdgurupro-lgtm`; its token works.
 
 ## Current state
 
@@ -99,7 +102,7 @@ sanity-check that the code behaves; real TSM numbers will differ.
 
 1. ~~td: create the repo and push, start the robot once~~ Done 2026-10-05 (see "Verified live").
 2. **First notebook run in Colab** on real data:
-   `https://colab.research.google.com/github/tdgurupro-lgtm/tsm-trend/blob/main/tsm_trend_demo.ipynb`.
+   `https://colab.research.google.com/github/tdgurupro/tsm-trend/blob/main/tsm_trend_demo.ipynb`.
    Review every chart and sentence against the real output; fix wording or axis ranges in the
    builder or `tsm_pipeline.py`, never in Colab. Do not tune the model to the results (D-03, D-11).
 3. **Time a rehearsal** against the 75-minute run-of-show; trim if over.
@@ -116,7 +119,7 @@ sanity-check that the code behaves; real TSM numbers will differ.
   trading: the notebook then uses the previous close, which is correct but worth knowing.
 - How long should the robot keep running ("for a while")? When should it be switched off?
 
-Answered 2026-10-05: first class Wednesday 2026-10-07; repo `tdgurupro-lgtm/tsm-trend`; students
+Answered 2026-10-05: first class Wednesday 2026-10-07; repo `tdgurupro/tsm-trend`; students
 only watch td's demo; English only for all class materials.
 
 ## Ideas raised but not agreed (do not build without asking)
