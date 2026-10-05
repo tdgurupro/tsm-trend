@@ -52,8 +52,11 @@ td received the repo as `tsm-trend.zip`, plus the notebook on its own.
    but inactive). Commits in this folder are authored as `tdgurupro <tdgurupro@gmail.com>`
    (repo-local git config; the machine-wide identity is unchanged). td created the repo and
    started the first robot run as `tdgurupro-lgtm`, then renamed that account to `tdgurupro` the
-   same day (account id 324321998), and every URL was updated. The first two commits still show
-   the old author name. Local `gh` may still list the account as `tdgurupro-lgtm`; its token works.
+   same day (account id 324321998), and every URL was updated. At td's request the git history
+   was then rewritten once (2026-10-05, about 05:00 UTC, before anyone outside had seen the repo)
+   so the two early commits carry the author `tdgurupro` instead of `tdgurupro-lgtm`. This
+   changed the hash of the robot's first commit ("Daily TSM call 2026-10-05"), not its content.
+   **Never rewrite history again**: the commits are the live record's audit trail (D-17, D-19).
 
 ## Current state
 
