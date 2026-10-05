@@ -114,9 +114,14 @@ td received the repo as `tsm-trend.zip`, plus the notebook on its own.
   `drop_impossible_fx` on the real history drops exactly 2011-10-25 and 2014-12-31 and keeps the
   other 4,211 rates (27.4 to 33.7); a real-data robot dry run into a scratch folder succeeded.
 
+- **Model v1.1 in Colab on real data (2026-10-05, about 06:40 UTC):** all cells ran; Part 2 prints
+  the two ignored FX dates; the ADR premium now spans about -7% to +32% with no spikes; the price
+  axis, feature table and accuracy bars render as intended. Walk-forward: always up 56.0%,
+  logistic 52.9%, boosting 50.4%, momentum 49.2% (v1 gave 52.7% and 50.5%: the fix barely moves
+  the result). Part 7 card for the 2026-10-02 close: logistic 55% UP, boosting 52% UP, next to the
+  robot's logged v1 call (boosting DOWN), with the D-28 note between them.
+
 ### NOT yet verified
-- **The notebook in Colab with model v1.1** (after the FX fix and chart changes). Rerun it there
-  before class.
 - **Scheduled runs** (the 22:30 UTC cron) and scoring of a matured call (first one: the 10-09 run).
 - The partial-bar guard (needs a run during New York trading hours).
 
@@ -129,9 +134,8 @@ sanity-check that the code behaves; real TSM numbers will differ.
 ## Next steps (in order; first class is Wednesday 2026-10-07)
 
 1. ~~td: create the repo and push, start the robot once~~ Done 2026-10-05 (see "Verified live").
-2. ~~First notebook run in Colab~~ Done 2026-10-05 (session item 7). **Rerun it after the v1.1
-   push** and check the FX message under Part 2, the ADR premium chart (no -90% spikes), the price
-   chart's axis, the feature table and the accuracy bars:
+2. ~~First notebook run in Colab, and the rerun with v1.1~~ Done 2026-10-05 (see "Verified live").
+   Notebook link for class:
    `https://colab.research.google.com/github/tdgurupro/tsm-trend/blob/main/tsm_trend_demo.ipynb`.
    Fix wording or axis ranges in the builder or `tsm_pipeline.py`, never in Colab. Do not tune the
    model to the results (D-03, D-11).
