@@ -1,3 +1,4 @@
 as_of_date,predicted_at_utc,tsm_close,prob_up_logistic,prob_up_boosting,call_logistic,call_boosting,call_always_up,check_on_approx,checked_on,actual_return_5d,actual,hit_logistic,hit_boosting,hit_always_up
 2026-10-02,2026-10-05 04:48,472.78,0.547,0.4961,UP,DOWN,UP,2026-10-09,,,,,,
 2026-10-05,2026-10-06 02:24,485.8,0.5515,0.5848,UP,UP,UP,2026-10-12,,,,,,
+2026-10-06,2026-10-07 01:44,482.3,0.5752,0.5771,UP,UP,UP,2026-10-13,,,,,,
