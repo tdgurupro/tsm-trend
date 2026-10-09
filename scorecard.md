@@ -1,9 +1,9 @@
 # TSM 5-day call: live scorecard
 
-**Latest call** (close of 2026-10-07, TSM $472.20, result due about 2026-10-14):
+**Latest call** (close of 2026-10-08, TSM $457.99, result due about 2026-10-15):
 
 - Logistic regression: **UP** (58% chance of UP)
-- Gradient boosting: **UP** (68% chance of UP)
+- Gradient boosting: **UP** (58% chance of UP)
 
 ## Accuracy so far
 
@@ -19,6 +19,7 @@ The 95% range shows how much of the accuracy could be luck. Daily calls overlap 
 
 | Close of | Logistic | Boosting | Actual 5-day move |
 |---|---|---|---|
+| 2026-10-08 | UP (58%) | UP (58%) | pending |
 | 2026-10-07 | UP (58%) | UP (68%) | pending |
 | 2026-10-06 | UP (58%) | UP (58%) | pending |
 | 2026-10-05 | UP (55%) | UP (58%) | pending |
