@@ -1,17 +1,17 @@
 # TSM 5-day call: live scorecard
 
-**Latest call** (close of 2026-10-30, TSM $406.13, result due about 2026-11-06):
+**Latest call** (close of 2026-11-02, TSM $398.63, result due about 2026-11-09):
 
-- Logistic regression: **UP** (63% chance of UP)
-- Gradient boosting: **UP** (67% chance of UP)
+- Logistic regression: **UP** (57% chance of UP)
+- Gradient boosting: **UP** (80% chance of UP)
 
 ## Accuracy so far
 
 | Strategy | Hits / scored | Accuracy | 95% range |
 |---|---|---|---|
-| Always up | 6 / 14 | 43% | 9% to 85% |
-| Logistic regression | 6 / 14 | 43% | 9% to 85% |
-| Gradient boosting | 7 / 14 | 50% | 12% to 88% |
+| Always up | 6 / 15 | 40% | 8% to 83% |
+| Logistic regression | 6 / 15 | 40% | 8% to 83% |
+| Gradient boosting | 7 / 15 | 47% | 11% to 86% |
 
 The 95% range shows how much of the accuracy could be luck. Daily calls overlap (each covers 5 trading days), so the range treats N calls as about N/5 separate weeks.
 
@@ -19,15 +19,15 @@ The 95% range shows how much of the accuracy could be luck. Daily calls overlap 
 
 | Close of | Logistic | Boosting | Actual 5-day move |
 |---|---|---|---|
+| 2026-11-02 | UP (57%) | UP (80%) | pending |
 | 2026-10-30 | UP (63%) | UP (67%) | pending |
 | 2026-10-29 | UP (61%) | UP (57%) | pending |
 | 2026-10-28 | UP (58%) | UP (64%) | pending |
 | 2026-10-27 | UP (54%) | UP (54%) | pending |
-| 2026-10-26 | UP (54%) | UP (54%) | pending |
+| 2026-10-26 | UP (54%) | UP (54%) | DOWN (-6.1%) |
 | 2026-10-22 | UP (60%) | UP (62%) | UP (+4.7%) |
 | 2026-10-21 | UP (54%) | UP (60%) | UP (+1.8%) |
 | 2026-10-20 | UP (54%) | UP (66%) | UP (+2.8%) |
 | 2026-10-19 | UP (54%) | UP (59%) | UP (+1.0%) |
-| 2026-10-16 | UP (60%) | UP (74%) | UP (+1.4%) |
 
 ![Running accuracy](scorecard.png)
